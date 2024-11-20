@@ -4,7 +4,7 @@
  */
 package core.models.bank;
 
-import core.models.bank.User;
+import core.models.person.User;
 
 /**
  *

@@ -5,9 +5,9 @@
 package core.views;
 
 import core.models.bank.Account;
-import core.models.bank.Transaction;
-import core.models.bank.TransactionType;
-import core.models.bank.User;
+import core.models.bank.transaction.Transaction;
+import core.models.bank.transaction.TransactionType;
+import core.models.person.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -105,6 +105,12 @@ public class BankFrame extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setText("Age");
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         jButton1.setText("Register");
@@ -692,6 +698,10 @@ public class BankFrame extends javax.swing.JFrame {
             model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
         }
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
 
     /**
      * @param args the command line arguments
