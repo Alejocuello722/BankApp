@@ -2,8 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package bank;
+package core.views;
 
+import core.models.bank.Account;
+import core.models.bank.Transaction;
+import core.models.bank.TransactionType;
+import core.models.bank.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
