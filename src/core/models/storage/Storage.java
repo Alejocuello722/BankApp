@@ -61,6 +61,11 @@ public class Storage {
         }
         return null;
     }
+    // GetUsers añadido
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+    
     
     public boolean delUser(int id) {
         for (User user : this.users) {
