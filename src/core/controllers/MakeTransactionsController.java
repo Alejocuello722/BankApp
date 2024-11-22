@@ -36,7 +36,7 @@ public class MakeTransactionsController {
         Account toAccount = null;
 
         // Buscar cuenta origen
-        for (Account account : storage.accounts) {
+        for (Account account : storage.getAccounts) {
             if (account.getId().equals(fromAccountId)) {
                 fromAccount = account;
                 break;
@@ -44,7 +44,7 @@ public class MakeTransactionsController {
         }
 
         // Buscar cuenta destino
-        for (Account account : storage.accounts) {
+        for (Account account : storage.getAccounts) {
             if (account.getId().equals(toAccountId)) {
                 toAccount = account;
                 break;
