@@ -7,6 +7,7 @@ package core.models.bank.transaction;
 import core.models.bank.Account;
 import core.models.bank.Account;
 import core.models.bank.transaction.TransactionType;
+import java.util.Date;
 
 /**
  *
@@ -24,6 +25,10 @@ public class Transaction {
         this.sourceAccount = sourceAccount;
         this.destinationAccount = destinationAccount;
         this.amount = amount;
+    }
+
+    public Transaction(String fromAccountId, String toAccountId, double amountDouble, Date date) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public TransactionType getType() {

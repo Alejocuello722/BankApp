@@ -5,6 +5,7 @@
 package core.models.storage;
 
 import core.models.bank.Account;
+import core.models.bank.transaction.Transaction;
 import core.models.person.User;
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class Storage {
     // Atributos del Storage
     private ArrayList<User> users;
     private ArrayList<Account> accounts;
+    public Iterable<Account> getAccounts;
     
     private Storage() {
         this.users = new ArrayList<>();
@@ -76,5 +78,14 @@ public class Storage {
         }
         return false;
     }
+
+    public ArrayList<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
     
 }
