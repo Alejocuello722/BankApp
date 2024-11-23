@@ -21,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class ViewAccountController {
 
-    public Response viewAccountController(JTable usersTable) {
+    public Response viewAccount(JTable usersTable) {
         try {
             // Obtener las cuentas desde el almacenamiento
             Storage storage = Storage.getInstance();
@@ -41,10 +41,10 @@ public class ViewAccountController {
                 });
                 
             }
-            return new Response("Accounts showed successfully", Status.OK);
+            return new Response("Users showed successfully", Status.OK);
         } catch (Exception e) {
             // Manejo de errores
-            return new Response("Error feaching or loading accounts", Status.INTERNAL_SERVER_ERROR);
+            return new Response("Error feaching or loading users", Status.INTERNAL_SERVER_ERROR);
         }
     }
 }

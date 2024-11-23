@@ -11,6 +11,7 @@ import core.models.bank.Account;
 import core.models.bank.transaction.Transaction;
 import core.models.bank.transaction.TransactionType;
 import core.models.person.User;
+import core.models.storage.Storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -582,8 +583,12 @@ public class BankFrame extends javax.swing.JFrame {
             
             String userId1 = UserIDTextField.getText();
              String initialBalance1 = InitialBalanceTextField.getText();
+             //Obtener owner
+             Storage storage = Storage.getInstance(); 
+             User owner = storage.getUser(userId);
              
-            Response response = CreateAccountController.createAccount(userId1, initialBalance1);
+             
+            Response response = CreateAccountController.createAccount(userId1, owner ,initialBalance1);
         
         if (response.getStatus() >= 500) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);

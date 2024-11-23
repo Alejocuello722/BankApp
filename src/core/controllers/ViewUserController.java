@@ -4,6 +4,8 @@
  */
 package core.controllers;
 
+import core.controllers.utils.Response;
+import core.controllers.utils.Status;
 import core.models.person.User;
 import core.models.storage.Storage;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Usuario
  */
 public class ViewUserController {
-    public void viewAccountController(JTable usersTable) {
+    public Response viewUser(JTable usersTable) {
         try {
             // Obtener los usuarios desde el almacenamiento
             Storage storage = Storage.getInstance();
@@ -35,9 +37,10 @@ public class ViewUserController {
                     user.getAge()
                 });
             }
+            return new Response("Accounts showed successfully", Status.OK);
         } catch (Exception e) {
             // Manejo de errores
-            JOptionPane.showMessageDialog(null, "Error fetching or loading users: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return new Response("Error feaching or loading accounts", Status.INTERNAL_SERVER_ERROR);
         }
     }
 }
