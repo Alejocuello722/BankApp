@@ -44,7 +44,7 @@ public class ViewTransactionController {
 
         // Agregar las transacciones al modelo de la tabla con validaciones
         for (Transaction transaction : transactions) {
-            // Validaciones individuales para cada transacción
+            /*// Validaciones individuales para cada transacción
             if (transaction.getType() == null || transaction.getType().trim().isEmpty()) {
                 continue; // Ignorar si el tipo es inválido
             }
@@ -57,6 +57,8 @@ public class ViewTransactionController {
             if (transaction.getAmount() <= 0) {
                 continue; // Ignorar si el monto es inválido
             }
+            
+            */
 
             // Agregar al modelo si pasa todas las validaciones
             model.addRow(new Object[]{

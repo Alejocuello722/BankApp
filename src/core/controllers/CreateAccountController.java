@@ -9,6 +9,7 @@ import core.controllers.utils.Status;
 import core.models.bank.Account;
 import core.models.person.User;
 import core.models.storage.Storage;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,13 +18,16 @@ import core.models.storage.Storage;
 public class CreateAccountController {
 public static Response createAccount(String id, User owner, String balance) {
     try {
+        if (!id.matches("^\\d{3}-\\d{6}-\\d{2}$")) {
+    return new Response("Account ID must follow the format XXX-XXXXXX-XX", Status.BAD_REQUEST);
+    }
         // Validar ID
         int idInt;
         try {
             idInt = Integer.parseInt(id);
             if (idInt < 0) {
                 return new Response("ID must be positive", Status.BAD_REQUEST);
-            }
+            } 
         } catch (NumberFormatException ex) {
             return new Response("ID must be numeric", Status.BAD_REQUEST);
         }
@@ -46,10 +50,26 @@ public static Response createAccount(String id, User owner, String balance) {
 
         // Crear cuenta
         Storage storage = Storage.getInstance();
-        Account account = new Account(id, owner, balanceInt); // Verifica este constructor
+        Account account = new Account(id, owner, balanceInt); 
+        
         if (!storage.addAccount(account)) {
             return new Response("An account with that ID already exists", Status.BAD_REQUEST);
         }
+        // Verificar que el usuario esté registrado
+        ArrayList<User> users = storage.getUsers();
+        boolean userFound = false; 
+
+        for (User owner1 : users) {
+            if (owner1.getId() == idInt) { // Comparar el ID del usuario
+                userFound = true; // Usuario encontrado
+                break; // Salir del bucle si el usuario se encuentra
+            }
+        }
+
+        if (!userFound) { // Si el usuario no fue encontrado
+            return new Response("Account not found", Status.BAD_REQUEST);
+        }
+        
 
         return new Response("Account created successfully", Status.CREATED);
     } catch (Exception ex) {

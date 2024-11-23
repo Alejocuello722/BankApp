@@ -17,16 +17,20 @@ public class RegisterUserController {
     public static Response registerUser(String id, String firstname, String lastname, String age) {
         try {
             int idInt, ageInt;
-            
+            // Validar que sea mayor que 0 y que solo tenga 9 digitos
             try {
                 idInt = Integer.parseInt(id);
                 if (idInt < 0) {
                     return new Response("Id must be positive", Status.BAD_REQUEST);
                 }
+                if (id.length() > 9) {
+            return new Response("ID must have at most 9 digits", Status.BAD_REQUEST);
+        }
             } catch (NumberFormatException ex) {
                 return new Response("Id must be numeric", Status.BAD_REQUEST);
             }
             
+            // Verificar que el nombre no sea vacío
             if (firstname.equals("")) {
                 return new Response("Firstname must be not empty", Status.BAD_REQUEST);
             }
@@ -37,8 +41,12 @@ public class RegisterUserController {
             
             try {
                 ageInt = Integer.parseInt(age);
+                // Validar que la edad sea mayor a 0 y mayor a 18
                 if (ageInt < 0) {
                     return new Response("Age must be positive", Status.BAD_REQUEST);
+                }
+                if (ageInt < 18) {
+                    return new Response("Person must be older than 18", Status.BAD_REQUEST);
                 }
             } catch (NumberFormatException ex) {
                 return new Response("Age must be numeric", Status.BAD_REQUEST);
