@@ -16,23 +16,16 @@ import java.util.ArrayList;
  * @author Usuario
  */
 public class CreateAccountController {
-public static Response createAccount(String id, User owner, String balance) {
+public static Response createAccount(String idAccount, User owner, String balance) {
     try {
-        if (!id.matches("^\\d{3}-\\d{6}-\\d{2}$")) {
+        
+        int idInt= Integer.parseInt(idAccount);
+        // Validar que el id siga el formato
+        if (!idAccount.matches("^\\d{3}-\\d{6}-\\d{2}$")) {
     return new Response("Account ID must follow the format XXX-XXXXXX-XX", Status.BAD_REQUEST);
     }
-        // Validar ID
-        int idInt;
-        try {
-            idInt = Integer.parseInt(id);
-            if (idInt < 0) {
-                return new Response("ID must be positive", Status.BAD_REQUEST);
-            } 
-        } catch (NumberFormatException ex) {
-            return new Response("ID must be numeric", Status.BAD_REQUEST);
-        }
 
-        // Validar Balance
+        // Validar que el valance sea mayor a 0
         int balanceInt;
         try {
             balanceInt = Integer.parseInt(balance);
@@ -50,7 +43,7 @@ public static Response createAccount(String id, User owner, String balance) {
 
         // Crear cuenta
         Storage storage = Storage.getInstance();
-        Account account = new Account(id, owner, balanceInt); 
+        Account account = new Account(idAccount, owner, balanceInt); 
         
         if (!storage.addAccount(account)) {
             return new Response("An account with that ID already exists", Status.BAD_REQUEST);
