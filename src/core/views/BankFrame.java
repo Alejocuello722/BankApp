@@ -76,17 +76,17 @@ public class BankFrame extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        UsersTable = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        AccountsTable = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        TransactionsTable = new javax.swing.JTable();
         jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -330,7 +330,7 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel14.setText("List Users");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        UsersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -349,7 +349,7 @@ public class BankFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(UsersTable);
 
         jButton4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         jButton4.setText("Refresh");
@@ -393,7 +393,7 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel15.setText("List Accounts");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        AccountsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -412,7 +412,7 @@ public class BankFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable2);
+        jScrollPane3.setViewportView(AccountsTable);
 
         jButton5.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         jButton5.setText("Refresh");
@@ -454,7 +454,7 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel16.setText("List Transactions");
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        TransactionsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -480,7 +480,7 @@ public class BankFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable3);
+        jScrollPane1.setViewportView(TransactionsTable);
 
         jButton6.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         jButton6.setText("Refresh");
@@ -670,7 +670,7 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) UsersTable.getModel();
         model.setRowCount(0);
         
         this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
@@ -682,7 +682,7 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel model = (DefaultTableModel) AccountsTable.getModel();
         model.setRowCount(0);
         
         this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
@@ -694,7 +694,7 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        DefaultTableModel model = (DefaultTableModel) TransactionsTable.getModel();
         model.setRowCount(0);
         
         ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
@@ -749,6 +749,9 @@ public class BankFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable AccountsTable;
+    private javax.swing.JTable TransactionsTable;
+    private javax.swing.JTable UsersTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -782,9 +785,6 @@ public class BankFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
