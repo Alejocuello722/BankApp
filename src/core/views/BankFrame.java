@@ -4,6 +4,9 @@
  */
 package core.views;
 
+import core.controllers.CreateAccountController;
+import core.controllers.RegisterUserController;
+import core.controllers.utils.Response;
 import core.models.bank.Account;
 import core.models.bank.transaction.Transaction;
 import core.models.bank.transaction.TransactionType;
@@ -54,14 +57,14 @@ public class BankFrame extends javax.swing.JFrame {
         FirstnameTextField = new javax.swing.JTextField();
         LastnameTextField = new javax.swing.JTextField();
         AgeTextField = new javax.swing.JTextField();
-        RegisterButton = new javax.swing.JButton();
+        RegisterUserButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         UserIDTextField = new javax.swing.JTextField();
         InitialBalanceTextField = new javax.swing.JTextField();
-        CreateButton = new javax.swing.JButton();
+        CreateAccountButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -118,11 +121,11 @@ public class BankFrame extends javax.swing.JFrame {
             }
         });
 
-        RegisterButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        RegisterButton.setText("Register");
-        RegisterButton.addActionListener(new java.awt.event.ActionListener() {
+        RegisterUserButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        RegisterUserButton.setText("Register");
+        RegisterUserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RegisterButtonActionPerformed(evt);
+                RegisterUserButtonActionPerformed(evt);
             }
         });
 
@@ -152,7 +155,7 @@ public class BankFrame extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(259, 259, 259)
-                .addComponent(RegisterButton)
+                .addComponent(RegisterUserButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -177,7 +180,7 @@ public class BankFrame extends javax.swing.JFrame {
                     .addComponent(AgeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addGap(18, 18, 18)
-                .addComponent(RegisterButton)
+                .addComponent(RegisterUserButton)
                 .addContainerGap(83, Short.MAX_VALUE))
         );
 
@@ -192,11 +195,11 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel8.setText("Initial Balance");
 
-        CreateButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        CreateButton.setText("Create");
-        CreateButton.addActionListener(new java.awt.event.ActionListener() {
+        CreateAccountButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        CreateAccountButton.setText("Create");
+        CreateAccountButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CreateButtonActionPerformed(evt);
+                CreateAccountButtonActionPerformed(evt);
             }
         });
 
@@ -221,7 +224,7 @@ public class BankFrame extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(265, 265, 265)
-                .addComponent(CreateButton)
+                .addComponent(CreateAccountButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -238,7 +241,7 @@ public class BankFrame extends javax.swing.JFrame {
                     .addComponent(InitialBalanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
                 .addGap(18, 18, 18)
-                .addComponent(CreateButton)
+                .addComponent(CreateAccountButton)
                 .addContainerGap(163, Short.MAX_VALUE))
         );
 
@@ -533,7 +536,7 @@ public class BankFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void RegisterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterButtonActionPerformed
+    private void RegisterUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterUserButtonActionPerformed
         // TODO add your handling code here:
         try {
             int id = Integer.parseInt(IDTextField.getText());
@@ -541,23 +544,56 @@ public class BankFrame extends javax.swing.JFrame {
             String lastname = LastnameTextField.getText();
             int age = Integer.parseInt(AgeTextField.getText());
             
+            // Nuevas variables obtenidas en modo String para usar los controladores
+            String id1 = IDTextField.getText();
+            String firstname1 = FirstnameTextField.getText();
+            String lastname1 = LastnameTextField.getText();
+            String age1 = AgeTextField.getText();
+            
+            
             this.users.add(new User(id, firstname, lastname, age));
+            
+            Response response = RegisterUserController.registerUser(id1, firstname1, lastname1, age1);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+            
             
             IDTextField.setText("");
             FirstnameTextField.setText("");
             LastnameTextField.setText("");
             AgeTextField.setText("");
+            
+        }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_RegisterButtonActionPerformed
+    }//GEN-LAST:event_RegisterUserButtonActionPerformed
 
-    private void CreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateButtonActionPerformed
+    private void CreateAccountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAccountButtonActionPerformed
         // TODO add your handling code here:
         try {
             int userId = Integer.parseInt(UserIDTextField.getText());
             double initialBalance = Double.parseDouble(InitialBalanceTextField.getText());
             
+            String userId1 = UserIDTextField.getText();
+             String initialBalance1 = InitialBalanceTextField.getText();
+             
+            Response response = CreateAccountController.createAccount(userId1, initialBalance1);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+        }
+            
+            // Crear numero de cuenta a usuario
             User selectedUser = null;
             for (User user : this.users) {
                 if (user.getId() == userId && selectedUser == null) {
@@ -575,13 +611,16 @@ public class BankFrame extends javax.swing.JFrame {
                 
                 this.accounts.add(new Account(accountId, selectedUser, initialBalance));
                 
+            // Aquí se deja de crear el numero de cuenta a usuario
+            
+                
                 UserIDTextField.setText("");
                 InitialBalanceTextField.setText("");
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_CreateButtonActionPerformed
+    }//GEN-LAST:event_CreateAccountButtonActionPerformed
 
     private void ExecuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExecuteButtonActionPerformed
         // TODO add your handling code here:
@@ -752,7 +791,7 @@ public class BankFrame extends javax.swing.JFrame {
     private javax.swing.JTable AccountsTable;
     private javax.swing.JTextField AgeTextField;
     private javax.swing.JTextField AmountTextField;
-    private javax.swing.JButton CreateButton;
+    private javax.swing.JButton CreateAccountButton;
     private javax.swing.JTextField DestinationAccountTextField;
     private javax.swing.JButton ExecuteButton;
     private javax.swing.JTextField FirstnameTextField;
@@ -762,7 +801,7 @@ public class BankFrame extends javax.swing.JFrame {
     private javax.swing.JButton RefreshAccountsButton;
     private javax.swing.JButton RefreshTransactionsButton;
     private javax.swing.JButton RefreshUsersButton;
-    private javax.swing.JButton RegisterButton;
+    private javax.swing.JButton RegisterUserButton;
     private javax.swing.JTextField SourceAccountTextField;
     private javax.swing.JTable TransactionsTable;
     private javax.swing.JComboBox<String> TypeComboBox;
