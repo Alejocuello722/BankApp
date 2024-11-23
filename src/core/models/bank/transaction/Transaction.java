@@ -19,12 +19,18 @@ public class Transaction {
     private Account sourceAccount;
     private Account destinationAccount;
     private double amount;
-    
+    private Date date;
+
     public Transaction(TransactionType type, Account sourceAccount, Account destinationAccount, double amount) {
         this.type = type;
         this.sourceAccount = sourceAccount;
         this.destinationAccount = destinationAccount;
         this.amount = amount;
+        this.date = new Date();  // Asignar la fecha
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     public Transaction(String fromAccountId, String toAccountId, double amountDouble, Date date) {

@@ -613,7 +613,7 @@ public class BankFrame extends javax.swing.JFrame {
                 int third = random.nextInt(100);
                 
                 String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                
+ 
                 this.accounts.add(new Account(accountId, selectedUser, initialBalance));
                 
             // Aquí se deja de crear el numero de cuenta a usuario
