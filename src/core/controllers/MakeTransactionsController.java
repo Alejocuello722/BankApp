@@ -9,7 +9,7 @@ import core.controllers.utils.Status;
 import core.models.bank.Account;
 import core.models.bank.transaction.Transaction;
 import core.models.storage.Storage;
-import core.models.person.User;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -34,9 +34,10 @@ public class MakeTransactionsController {
         Storage storage = Storage.getInstance();
         Account fromAccount = null;
         Account toAccount = null;
+        ArrayList <Account>accounts = storage.getAccounts();
 
         // Buscar cuenta origen
-        for (Account account : storage.getAccounts) {
+        for (Account account : accounts) {
             if (account.getId().equals(fromAccountId)) {
                 fromAccount = account;
                 break;
@@ -44,7 +45,7 @@ public class MakeTransactionsController {
         }
 
         // Buscar cuenta destino
-        for (Account account : storage.getAccounts) {
+        for (Account account : accounts) {
             if (account.getId().equals(toAccountId)) {
                 toAccount = account;
                 break;
