@@ -55,6 +55,10 @@ public class Account {
         this.balance -= amount;
         return true;
     }
+
+    public Object trim() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     
     
