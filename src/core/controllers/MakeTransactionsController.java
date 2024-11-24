@@ -131,8 +131,8 @@ public class MakeTransactionsController {
         }
 
         Storage storage = Storage.getInstance();
-        //Buscar las cuentas
-        // Buscar la cuenta de origen y destino
+
+        // Buscar las cuentas de origen y destino
         Account sourceAccount = null;
         Account destinationAccount = null;
         for (Account acc : storage.getAccounts()) {
@@ -143,20 +143,6 @@ public class MakeTransactionsController {
                 destinationAccount = acc;
             }
         }
-        
-        // Validar existencia de las cuentas
-        if (!storage.isAccountExists(sourceAccountId)) {
-            return new Response("Source account not found", Status.NOT_FOUND);
-        }
-        if (!storage.isAccountExists(destinationAccountId)) {
-            return new Response("Destination account not found", Status.NOT_FOUND);
-        }
-        
-        if (amountDouble > sourceAccount.getBalance()) {
-            return new Response("Insufficient funds", Status.BAD_REQUEST);
-        }
- 
-
 
         // Validar existencia de las cuentas
         if (sourceAccount == null) {
@@ -166,18 +152,15 @@ public class MakeTransactionsController {
             return new Response("Destination account not found", Status.NOT_FOUND);
         }
 
-        // Validar saldo suficiente en la cuenta de origen
-        if (amountDouble > sourceAccount.getBalance()) {
+        // Realizar la transferencia usando el método transfer
+        boolean success = sourceAccount.transfer(destinationAccount, amountDouble);
+
+        if (!success) {
             return new Response("Insufficient funds", Status.BAD_REQUEST);
         }
 
-        // Realizar la transferencia
-        sourceAccount.withdraw(amountDouble); // Retirar del origen
-        destinationAccount.deposit(amountDouble); // Depositar en el destino
-
         // Registrar las transacciones
-        storage.addTransaction(new Transaction(TRANSFER, sourceAccount, -amountDouble, new Date())); // Transacción de salida
-        storage.addTransaction(new Transaction(TRANSFER, destinationAccount, amountDouble, new Date())); // Transacción de entrada
+        storage.addTransaction(new Transaction(TRANSFER, sourceAccount,destinationAccount ,amountDouble, new Date()));
 
         return new Response("Transfer successful", Status.OK);
 
@@ -185,6 +168,7 @@ public class MakeTransactionsController {
         return new Response("Unexpected error: " + ex.getMessage(), Status.INTERNAL_SERVER_ERROR);
     }
 }
+
 
     }
 

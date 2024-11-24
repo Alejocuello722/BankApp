@@ -37,6 +37,15 @@ public class Transaction {
     this.amount = amount;
     this.date = date;
 }
+    
+       //Constructor para transferencia
+    public Transaction(TransactionType type, Account sourceAccount, Account destinationAccount, double amount, Date date) {
+    this.type = type;
+    this.sourceAccount = sourceAccount; 
+    this.destinationAccount = destinationAccount; // No hay cuenta destino en un depósito
+    this.amount = amount;
+    this.date = date;
+}
   
     
 

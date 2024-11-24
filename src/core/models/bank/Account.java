@@ -55,6 +55,29 @@ public class Account {
         this.balance -= amount;
         return true;
     }
+    
+    public boolean transfer(Account destinationAccount, double amount) {
+    // Validar que la cuenta de destino no sea nula
+    if (destinationAccount == null) {
+        throw new IllegalArgumentException("Destination account cannot be null.");
+    }
+
+    // Validar que el monto sea positivo
+    if (amount <= 0) {
+        throw new IllegalArgumentException("Amount must be greater than zero.");
+    }
+
+    // Validar que haya saldo suficiente en la cuenta origen
+    if (this.balance < amount) {
+        return false; // No hay fondos suficientes
+    }
+
+    // Realizar la transferencia
+    this.balance -= amount; // Descontar del saldo actual
+    destinationAccount.deposit(amount); // Depositar en la cuenta de destino
+
+    return true; // Transferencia exitosa
+}
 
     public Object trim() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

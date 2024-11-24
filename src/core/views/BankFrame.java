@@ -584,7 +584,9 @@ public class BankFrame extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
-            
+             
+            UserIDTextField.setText("");
+            InitialBalanceTextField.setText("");
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
@@ -630,6 +632,8 @@ public class BankFrame extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                     }
                     
+                    DestinationAccountTextField.setText("");
+                    AmountTextField.setText("");
                     
                     break;
                 }
@@ -664,6 +668,11 @@ public class BankFrame extends javax.swing.JFrame {
                     } else {
                         JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                     }
+                    
+                    SourceAccountTextField.setText("");
+                    AmountTextField.setText("");
+                    
+                    SourceAccountTextField.setText("");
                     break;
                 }
                 
@@ -710,6 +719,10 @@ public class BankFrame extends javax.swing.JFrame {
                     } else {
                         JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                     }
+                    
+                    DestinationAccountTextField.setText("");
+                    SourceAccountTextField.setText("");
+                    AmountTextField.setText("");
                     
                     break;
                 }
