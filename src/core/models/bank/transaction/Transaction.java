@@ -28,6 +28,17 @@ public class Transaction {
         this.amount = amount;
         this.date = new Date();  // Asignar la fecha
     }
+    
+    //Constructor para depositos y retiros
+    public Transaction(TransactionType type, Account sourceAccount, double amount, Date date) {
+    this.type = type;
+    this.sourceAccount = sourceAccount; 
+    this.destinationAccount = null; // No hay cuenta destino en un depósito
+    this.amount = amount;
+    this.date = date;
+}
+  
+    
 
     public Date getDate() {
         return date;

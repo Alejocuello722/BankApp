@@ -8,8 +8,10 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.bank.Account;
 import core.models.bank.transaction.Transaction;
+import static core.models.bank.transaction.TransactionType.DEPOSIT;
+import static core.models.bank.transaction.TransactionType.TRANSFER;
+import static core.models.bank.transaction.TransactionType.WITHDRAW;
 import core.models.storage.Storage;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -52,13 +54,15 @@ public class MakeTransactionsController {
             account.deposit(amountDouble);
 
             // Registrar la transacción
-            storage.addTransaction(new Transaction("DEPOSIT", accountId, amountDouble, new Date()));
+            storage.addTransaction(new Transaction(DEPOSIT, account, amountDouble, new Date()));
             return new Response("Deposit successful", Status.OK);
 
         } catch (Exception ex) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    
 
     // Método para retirar dinero de una cuenta
     public static Response MakeWithdraw(String accountId, String amount) {
@@ -104,7 +108,7 @@ public class MakeTransactionsController {
             account.withdraw(amountDouble);
 
             // Registrar la transacción
-            storage.addTransaction(new Transaction("WITHDRAW", accountId, amountDouble, new Date()));
+            storage.addTransaction(new Transaction(WITHDRAW, account, amountDouble, new Date()));
             return new Response("Withdrawal successful", Status.OK);
 
         } catch (Exception ex) {
@@ -172,8 +176,8 @@ public class MakeTransactionsController {
         destinationAccount.deposit(amountDouble); // Depositar en el destino
 
         // Registrar las transacciones
-        storage.addTransaction(new Transaction("TRANSFER", sourceAccountId, -amountDouble, new Date())); // Transacción de salida
-        storage.addTransaction(new Transaction("TRANSFER", destinationAccountId, amountDouble, new Date())); // Transacción de entrada
+        storage.addTransaction(new Transaction(TRANSFER, sourceAccount, -amountDouble, new Date())); // Transacción de salida
+        storage.addTransaction(new Transaction(TRANSFER, destinationAccount, amountDouble, new Date())); // Transacción de entrada
 
         return new Response("Transfer successful", Status.OK);
 

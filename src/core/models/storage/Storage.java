@@ -88,18 +88,26 @@ public class Storage {
 
     // Métodos de gestión de transacciones
     public boolean addTransaction(Transaction transaction) {
-        for (Transaction t : this.transactions) {
-            // Comparación basada en la igualdad de las cuentas origen/destino, monto y tipo
-            if (t.getSourceAccount().equals(transaction.getSourceAccount())
-                && t.getDestinationAccount().equals(transaction.getDestinationAccount())
-                && t.getAmount() == transaction.getAmount()
-                && t.getType() == transaction.getType()) {
-                return false;
-            }
-        }
-        this.transactions.add(transaction);
-        return true;
+    // Validar que la transacción no sea nula
+    if (transaction == null) {
+        return false;
     }
+
+    for (Transaction t : this.transactions) {
+        // Comparación basada en la igualdad de cuentas, monto y tipo
+        if (t.getSourceAccount() != null && t.getSourceAccount().equals(transaction.getSourceAccount())
+            && t.getDestinationAccount() != null && t.getDestinationAccount().equals(transaction.getDestinationAccount())
+            && Math.abs(t.getAmount() - transaction.getAmount()) < 0.0001 // Comparación con tolerancia
+            && t.getType() != null && t.getType().equals(transaction.getType())) {
+            return false; // Ya existe una transacción similar
+        }
+    }
+
+    // Agregar la transacción
+    this.transactions.add(transaction);
+    return true;
+}
+
 
 
     public ArrayList<Transaction> getTransactions() {
