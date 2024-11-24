@@ -20,17 +20,25 @@ import javax.swing.table.DefaultTableModel;
 
 public class ViewAccountController {
 
-    public Response viewAccount(JTable usersTable) {
+   public static Response viewAccount(DefaultTableModel model) {
     try {
+        // Validar que el modelo no sea nulo
+        if (model == null) {
+            return new Response("Table model cannot be null", Status.BAD_REQUEST);
+        }
+
         // Obtener las cuentas desde el almacenamiento
         Storage storage = Storage.getInstance();
         ArrayList<Account> accounts = storage.getAccounts(); // Obtengo las cuentas
 
+        // Validar si hay cuentas disponibles
+        if (accounts == null || accounts.isEmpty()) {
+            return new Response("No accounts available to show", Status.OK);
+        }
+
         // Ordenar las cuentas por ID
         accounts.sort(Comparator.comparing(Account::getId));
 
-        // Modelo de la tabla
-        DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
         model.setRowCount(0); // Limpia las filas existentes
 
         // Agregar las cuentas al modelo de la tabla
@@ -41,11 +49,13 @@ public class ViewAccountController {
                 account.getBalance(),
             });
         }
+
         return new Response("Accounts showed successfully", Status.OK);
     } catch (Exception e) {
         // Manejo de errores
-        return new Response("Error fetching or loading accounts", Status.INTERNAL_SERVER_ERROR);
+        return new Response("Error fetching or loading accounts: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
     }
 }
+
 
 }

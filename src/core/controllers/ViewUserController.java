@@ -18,33 +18,43 @@ import javax.swing.table.DefaultTableModel;
  * @author Usuario
  */
 public class ViewUserController {
-   public Response viewUser(JTable usersTable) {
+   public static Response viewUser(DefaultTableModel model) {
     try {
+        // Validar que el modelo no sea nulo
+        if (model == null) {
+            return new Response("Table model cannot be null", Status.BAD_REQUEST);
+        }
+
         // Obtener los usuarios desde el almacenamiento
         Storage storage = Storage.getInstance();
         ArrayList<User> users = storage.getUsers(); // Obtengo los usuarios
 
-        // Ordenar los usuarios por ID usando collections y comparator
+        // Validar si hay usuarios disponibles
+        if (users == null || users.isEmpty()) {
+            return new Response("No users available to show", Status.OK);
+        }
+
+        // Ordenar los usuarios por ID usando Comparator
         users.sort(Comparator.comparing(User::getId));
 
-        // Modelo de la tabla
-        DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
         model.setRowCount(0); // Limpia las filas existentes
 
         // Agregar los usuarios al modelo de la tabla
         for (User user : users) {
             model.addRow(new Object[]{
                 user.getId(),
-                user.getFirstname(),
-                user.getLastname(),
-                user.getAge()
+                user.getFirstname() + " " + user.getLastname(), // Nombre completo
+                user.getAge(), // Edad
+                user.getNumAccounts()
             });
         }
-        return new Response("Accounts showed successfully", Status.OK);
+
+        return new Response("Users showed successfully", Status.OK);
     } catch (Exception e) {
         // Manejo de errores
-        return new Response("Error fetching or loading accounts", Status.INTERNAL_SERVER_ERROR);
+        return new Response("Error fetching or loading users: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
     }
 }
+
 
 }

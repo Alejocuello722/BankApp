@@ -18,17 +18,11 @@ import javax.swing.table.DefaultTableModel;
  * @author Usuario
  */
 public class ViewTransactionController {
-    public Response viewTransaction(JTable usersTable) {
+    public static Response viewTransaction(DefaultTableModel model) {
     try {
-        // Validar que la tabla no sea nula
-        if (usersTable == null) {
-            return new Response("Table component cannot be null", Status.BAD_REQUEST);
-        }
-
-        // Validar si el modelo de la tabla está configurado
-        DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
+        // Validar que el modelo no sea nulo
         if (model == null) {
-            return new Response("Table model is not set", Status.BAD_REQUEST);
+            return new Response("Table model cannot be null", Status.BAD_REQUEST);
         }
 
         // Obtener las transacciones desde el almacenamiento
@@ -47,11 +41,16 @@ public class ViewTransactionController {
 
         // Agregar las transacciones al modelo de la tabla con validaciones
         for (Transaction transaction : transactions) {
-            // Agregar al modelo si pasa todas las validaciones
+            // Manejo de destino nulo para evitar errores
+            String destinationAccountId = transaction.getDestinationAccount() != null
+                    ? transaction.getDestinationAccount().getId()
+                    : "N/A";
+
+            // Agregar al modelo de la tabla
             model.addRow(new Object[]{
                 transaction.getType(),
                 transaction.getSourceAccount().getId(),
-                transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "N/A",  // Manejo de destino nulo
+                destinationAccountId,
                 transaction.getAmount(),
                 transaction.getDate()  // Agregar la fecha de la transacción
             });
@@ -63,6 +62,7 @@ public class ViewTransactionController {
         }
 
         return new Response("Transactions showed successfully", Status.OK);
+
     } catch (Exception e) {
         // Manejo de errores
         return new Response("Error fetching or loading transactions: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);

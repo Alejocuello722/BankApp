@@ -8,13 +8,13 @@ import core.controllers.CreateAccountController;
 import core.controllers.MakeTransactionsController;
 import core.controllers.RegisterUserController;
 import core.controllers.ViewAccountController;
+import core.controllers.ViewTransactionController;
 import core.controllers.ViewUserController;
 import core.controllers.utils.Response;
 import core.models.bank.Account;
 import core.models.bank.transaction.Transaction;
 import core.models.person.User;
 import java.util.ArrayList;
-import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -776,7 +776,17 @@ public class BankFrame extends javax.swing.JFrame {
     private void RefreshTransactionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshTransactionsButtonActionPerformed
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) TransactionsTable.getModel();
-        model.setRowCount(0);
+        Response response = ViewTransactionController.viewTransaction(model);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        /*model.setRowCount(0);
         
         ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
         Collections.reverse(transactionsCopy);
@@ -784,6 +794,8 @@ public class BankFrame extends javax.swing.JFrame {
         for (Transaction transaction : transactionsCopy) {
             model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
         }
+        
+        */
     }//GEN-LAST:event_RefreshTransactionsButtonActionPerformed
 
     private void IDTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDTextFieldActionPerformed
@@ -793,41 +805,7 @@ public class BankFrame extends javax.swing.JFrame {
     private void FirstnameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FirstnameTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_FirstnameTextFieldActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new BankFrame().setVisible(true);
-            }
-        });
-    }
+// Main eliminado
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AccountsTable;
