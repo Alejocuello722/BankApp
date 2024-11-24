@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 
-public class User {
+public class User implements AddAccount {
     
     private int id;
     private String firstname;
@@ -50,10 +50,12 @@ public class User {
     public int getNumAccounts() {
         return this.accounts.size();
     }
-    
+        
+    @Override
     public void addAccount(Account account) {
         this.accounts.add(account);
     }
+        
     
 }
 

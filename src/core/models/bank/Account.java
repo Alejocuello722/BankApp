@@ -10,28 +10,28 @@ import core.models.person.User;
  *
  * @author edangulo
  */
-public class Account {
-    
+
+
+ public class Account extends TransactionAccountMethods {
     private String id;
     private User owner;
     private double balance;
 
+    // Constructores
     public Account(String id, User owner) {
-        this.id = id;
-        this.owner = owner;
-        this.balance = 0;
-        
-        this.owner.addAccount(this);
+        this(id, owner, 0); // Llama al constructor con saldo inicial
     }
-    
+
     public Account(String id, User owner, double balance) {
         this.id = id;
         this.owner = owner;
         this.balance = balance;
-        
+
+        // Asocia la cuenta al usuario
         this.owner.addAccount(this);
     }
-    
+
+    // Getters
     public String getId() {
         return id;
     }
@@ -40,49 +40,33 @@ public class Account {
         return owner;
     }
 
+    // Implementaciones de métodos abstractos
+    @Override
     public double getBalance() {
         return balance;
     }
-    
-    public void deposit(double amount) {
+
+    @Override
+    protected void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public void deposit(Account account, double amount) {
+        if (account == null) {
+            throw new IllegalArgumentException("Account cannot be null.");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero.");
+        }
+        account.depositToAccount(amount);
+    }
+
+    @Override
+    public void depositToAccount(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero.");
+        }
         this.balance += amount;
     }
-    
-    public boolean withdraw(double amount) {
-        if (amount > this.balance) {
-            return false;
-        }
-        this.balance -= amount;
-        return true;
-    }
-    
-    public boolean transfer(Account destinationAccount, double amount) {
-    // Validar que la cuenta de destino no sea nula
-    if (destinationAccount == null) {
-        throw new IllegalArgumentException("Destination account cannot be null.");
-    }
-
-    // Validar que el monto sea positivo
-    if (amount <= 0) {
-        throw new IllegalArgumentException("Amount must be greater than zero.");
-    }
-
-    // Validar que haya saldo suficiente en la cuenta origen
-    if (this.balance < amount) {
-        return false; // No hay fondos suficientes
-    }
-
-    // Realizar la transferencia
-    this.balance -= amount; // Descontar del saldo actual
-    destinationAccount.deposit(amount); // Depositar en la cuenta de destino
-
-    return true; // Transferencia exitosa
-}
-
-    public Object trim() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
-    
-    
 }
