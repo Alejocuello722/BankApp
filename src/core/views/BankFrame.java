@@ -5,16 +5,16 @@
 package core.views;
 
 import core.controllers.CreateAccountController;
+import core.controllers.MakeTransactionsController;
 import core.controllers.RegisterUserController;
+import core.controllers.ViewAccountController;
+import core.controllers.ViewUserController;
 import core.controllers.utils.Response;
 import core.models.bank.Account;
 import core.models.bank.transaction.Transaction;
-import core.models.bank.transaction.TransactionType;
 import core.models.person.User;
-import core.models.storage.Storage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -540,20 +540,13 @@ public class BankFrame extends javax.swing.JFrame {
     private void RegisterUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterUserButtonActionPerformed
         // TODO add your handling code here:
         try {
-            int id = Integer.parseInt(IDTextField.getText());
-            String firstname = FirstnameTextField.getText();
-            String lastname = LastnameTextField.getText();
-            int age = Integer.parseInt(AgeTextField.getText());
-            
             // Nuevas variables obtenidas en modo String para usar los controladores
             String id1 = IDTextField.getText();
             String firstname1 = FirstnameTextField.getText();
             String lastname1 = LastnameTextField.getText();
             String age1 = AgeTextField.getText();
             
-            
-            this.users.add(new User(id, firstname, lastname, age));
-            
+            // Se llama al controlador que realiza la parte logica
             Response response = RegisterUserController.registerUser(id1, firstname1, lastname1, age1);
         
         if (response.getStatus() >= 500) {
@@ -578,17 +571,11 @@ public class BankFrame extends javax.swing.JFrame {
     private void CreateAccountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAccountButtonActionPerformed
         // TODO add your handling code here:
         try {
-            int userId = Integer.parseInt(UserIDTextField.getText());
-            double initialBalance = Double.parseDouble(InitialBalanceTextField.getText());
             
             String userId1 = UserIDTextField.getText();
              String initialBalance1 = InitialBalanceTextField.getText();
-             //Obtener owner
-             Storage storage = Storage.getInstance(); 
-             User owner = storage.getUser(userId);
-             
-             
-            Response response = CreateAccountController.createAccount(userId1, owner ,initialBalance1);
+        
+            Response response = CreateAccountController.createAccount(userId1, initialBalance1);
         
         if (response.getStatus() >= 500) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
@@ -598,30 +585,7 @@ public class BankFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
             
-            // Crear numero de cuenta a usuario
-            User selectedUser = null;
-            for (User user : this.users) {
-                if (user.getId() == userId && selectedUser == null) {
-                    selectedUser = user;
-                }
-            }
-            
-            if (selectedUser != null) {
-                Random random = new Random();
-                int first = random.nextInt(1000);
-                int second = random.nextInt(1000000);
-                int third = random.nextInt(100);
-                
-                String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
- 
-                this.accounts.add(new Account(accountId, selectedUser, initialBalance));
-                
-            // Aquí se deja de crear el numero de cuenta a usuario
-            
-                
-                UserIDTextField.setText("");
-                InitialBalanceTextField.setText("");
-            }
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -633,7 +597,7 @@ public class BankFrame extends javax.swing.JFrame {
             String type = TypeComboBox.getItemAt(TypeComboBox.getSelectedIndex());
             switch (type) {
                 case "Deposit": {
-                    String destinationAccountId = DestinationAccountTextField.getText();
+                    /* String destinationAccountId = DestinationAccountTextField.getText();
                     double amount = Double.parseDouble(AmountTextField.getText());
                     
                     Account destinationAccount = null;
@@ -651,10 +615,26 @@ public class BankFrame extends javax.swing.JFrame {
                         DestinationAccountTextField.setText("");
                         AmountTextField.setText("");
                     }
+                    
+                    */
+                    String destinationAccountId = DestinationAccountTextField.getText();
+                    String amount = AmountTextField.getText();
+                    
+                    Response response = MakeTransactionsController.MakeDeposit(destinationAccountId, amount);
+        
+                    if (response.getStatus() >= 500) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                    } else if (response.getStatus() >= 400) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    
+                    
                     break;
                 }
                 case "Withdraw": {
-                    String sourceAccountId = SourceAccountTextField.getText();
+                    /* String sourceAccountId = SourceAccountTextField.getText();
                     double amount = Double.parseDouble(AmountTextField.getText());
                     
                     Account sourceAccount = null;
@@ -670,9 +650,26 @@ public class BankFrame extends javax.swing.JFrame {
                         DestinationAccountTextField.setText("");
                         AmountTextField.setText("");
                     }
+
+                            */
+                    String sourceAccountId = SourceAccountTextField.getText();
+                    String amount = AmountTextField.getText();
+                    
+                    Response response = MakeTransactionsController.MakeWithdraw(sourceAccountId, amount);
+        
+                    if (response.getStatus() >= 500) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                    } else if (response.getStatus() >= 400) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+                    }
                     break;
                 }
+                
                 case "Transfer": {
+                    
+                    /*
                     String sourceAccountId = SourceAccountTextField.getText();
                     String destinationAccountId = DestinationAccountTextField.getText();
                     double amount = Double.parseDouble(AmountTextField.getText());
@@ -698,6 +695,22 @@ public class BankFrame extends javax.swing.JFrame {
                         DestinationAccountTextField.setText("");
                         AmountTextField.setText("");
                     }
+                    */
+                    
+                    String sourceAccountId = SourceAccountTextField.getText();
+                    String destinationAccountId = DestinationAccountTextField.getText();
+                    String amount = AmountTextField.getText();
+                    
+                    Response response = MakeTransactionsController.MakeTransfer(sourceAccountId, destinationAccountId, amount);
+        
+                    if (response.getStatus() >= 500) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                    } else if (response.getStatus() >= 400) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    
                     break;
                 }
                 default: {
@@ -715,25 +728,49 @@ public class BankFrame extends javax.swing.JFrame {
     private void RefreshUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshUsersButtonActionPerformed
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) UsersTable.getModel();
-        model.setRowCount(0);
+        
+        Response response = ViewUserController.viewUser(model);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+        }
+        /*model.setRowCount(0);
         
         this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
         
         for (User user : this.users) {
             model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
         }
+        */
     }//GEN-LAST:event_RefreshUsersButtonActionPerformed
 
     private void RefreshAccountsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshAccountsButtonActionPerformed
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) AccountsTable.getModel();
-        model.setRowCount(0);
+        Response response = ViewAccountController.viewAccount(model);
         
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        
+        /*
+        model.setRowCount(0);
         this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
         
         for (Account account : this.accounts) {
             model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
         }
+        
+        */
     }//GEN-LAST:event_RefreshAccountsButtonActionPerformed
 
     private void RefreshTransactionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshTransactionsButtonActionPerformed

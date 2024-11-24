@@ -40,32 +40,20 @@ public class ViewTransactionController {
             return new Response("No transactions available to show", Status.OK);
         }
 
+        // Ordenar las transacciones de más reciente a más antigua (por fecha)
+        transactions.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
+
         model.setRowCount(0); // Limpia las filas existentes
 
         // Agregar las transacciones al modelo de la tabla con validaciones
         for (Transaction transaction : transactions) {
-            /*// Validaciones individuales para cada transacción
-            if (transaction.getType() == null || transaction.getType().trim().isEmpty()) {
-                continue; // Ignorar si el tipo es inválido
-            }
-            if (transaction.getSourceAccount() == null || transaction.getSourceAccount().trim().isEmpty()) {
-                continue; // Ignorar si la cuenta de origen es inválida
-            }
-            if (transaction.getDestinationAccount() == null || transaction.getDestinationAccount().trim().isEmpty()) {
-                continue; // Ignorar si la cuenta de destino es inválida
-            }
-            if (transaction.getAmount() <= 0) {
-                continue; // Ignorar si el monto es inválido
-            }
-            
-            */
-
             // Agregar al modelo si pasa todas las validaciones
             model.addRow(new Object[]{
                 transaction.getType(),
-                transaction.getSourceAccount(),
-                transaction.getDestinationAccount(),
-                transaction.getAmount()
+                transaction.getSourceAccount().getId(),
+                transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "N/A",  // Manejo de destino nulo
+                transaction.getAmount(),
+                transaction.getDate()  // Agregar la fecha de la transacción
             });
         }
 
@@ -79,5 +67,7 @@ public class ViewTransactionController {
         // Manejo de errores
         return new Response("Error fetching or loading transactions: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR);
     }
-}}
+}
+
+}
 

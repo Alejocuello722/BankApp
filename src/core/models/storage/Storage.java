@@ -105,5 +105,14 @@ public class Storage {
     public ArrayList<Transaction> getTransactions() {
         return transactions;
     }
+    
+    public boolean isAccountExists(String accountId) {
+        for (Account acc : accounts) {
+            if (acc.getId().equals(accountId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

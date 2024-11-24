@@ -17,7 +17,102 @@ import java.util.Date;
  * @author Usuario
  */
 public class MakeTransactionsController {
-   public static Response MakeTransaction(String fromAccountId, String toAccountId, String amount) {
+    // Método para depositar dinero a una cuenta
+    public static Response MakeDeposit(String accountId, String amount) {
+        try {
+            double amountDouble;
+
+            // Validar que el monto sea numérico y positivo
+            try {
+                amountDouble = Double.parseDouble(amount);
+                if (amountDouble <= 0) {
+                    return new Response("Amount must be positive", Status.BAD_REQUEST);
+                }
+            } catch (NumberFormatException ex) {
+                return new Response("Amount must be numeric", Status.BAD_REQUEST);
+            }
+
+            Storage storage = Storage.getInstance();
+            
+                    // Validar existencia de la cuenta
+                if (!storage.isAccountExists(accountId)) {
+                    return new Response("Account not found", Status.NOT_FOUND);
+                }
+            Account account = null;
+
+            // Buscar cuenta
+            for (Account acc : storage.getAccounts()) {
+                if (acc.getId().equals(accountId)) {
+                    account = acc;
+                    break;
+                }
+            }
+
+            // Realizar depósito
+            account.deposit(amountDouble);
+
+            // Registrar la transacción
+            storage.addTransaction(new Transaction("DEPOSIT", accountId, amountDouble, new Date()));
+            return new Response("Deposit successful", Status.OK);
+
+        } catch (Exception ex) {
+            return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Método para retirar dinero de una cuenta
+    public static Response MakeWithdraw(String accountId, String amount) {
+        try {
+            double amountDouble;
+
+            // Validar que el monto sea numérico y positivo
+            try {
+                amountDouble = Double.parseDouble(amount);
+                if (amountDouble <= 0) {
+                    return new Response("Amount must be positive", Status.BAD_REQUEST);
+                }
+            } catch (NumberFormatException ex) {
+                return new Response("Amount must be numeric", Status.BAD_REQUEST);
+            }
+
+            Storage storage = Storage.getInstance();
+            // Validar si la cuenta existe
+            if (!storage.isAccountExists(accountId)) {
+            return new Response("Account not found", Status.NOT_FOUND);
+        }
+            Account account = null;
+
+            // Buscar cuenta
+            for (Account acc : storage.getAccounts()) {
+                if (acc.getId().equals(accountId)) {
+                    account = acc;
+                    break;
+                }
+            }
+
+            // Validar existencia de la cuenta
+            if (account == null) {
+                return new Response("Account not found", Status.NOT_FOUND);
+            }
+
+            // Validar saldo suficiente (Validar si monto a retirar es mayor a saldo de la cuenta)
+            if (amountDouble > account.getBalance()) {
+                return new Response("Insufficient funds", Status.BAD_REQUEST);
+            }
+
+            // Realizar retiro
+            account.withdraw(amountDouble);
+
+            // Registrar la transacción
+            storage.addTransaction(new Transaction("WITHDRAW", accountId, amountDouble, new Date()));
+            return new Response("Withdrawal successful", Status.OK);
+
+        } catch (Exception ex) {
+            return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    public static Response MakeTransfer(String sourceAccountId, String destinationAccountId, String amount) {
     try {
         double amountDouble;
 
@@ -32,145 +127,62 @@ public class MakeTransactionsController {
         }
 
         Storage storage = Storage.getInstance();
-        Account fromAccount = null;
-        Account toAccount = null;
-
-        // Obtener cuentas ordenadas por ID
-        ArrayList<Account> accounts = storage.getAccounts();
-        accounts.sort((a, b) -> a.getId().compareTo(b.getId())); // Ordenar las cuentas por ID
-
-        // Buscar cuenta origen
-        for (Account account : accounts) {
-            if (account.getId().equals(fromAccountId)) {
-                fromAccount = account;
-                break;
+        //Buscar las cuentas
+        // Buscar la cuenta de origen y destino
+        Account sourceAccount = null;
+        Account destinationAccount = null;
+        for (Account acc : storage.getAccounts()) {
+            if (acc.getId().equals(sourceAccountId)) {
+                sourceAccount = acc;
+            }
+            if (acc.getId().equals(destinationAccountId)) {
+                destinationAccount = acc;
             }
         }
-
-        // Buscar cuenta destino
-        for (Account account : accounts) {
-            if (account.getId().equals(toAccountId)) {
-                toAccount = account;
-                break;
-            }
-        }
-
+        
         // Validar existencia de las cuentas
-        if (fromAccount == null) {
+        if (!storage.isAccountExists(sourceAccountId)) {
             return new Response("Source account not found", Status.NOT_FOUND);
         }
-        if (toAccount == null) {
+        if (!storage.isAccountExists(destinationAccountId)) {
+            return new Response("Destination account not found", Status.NOT_FOUND);
+        }
+        
+        if (amountDouble > sourceAccount.getBalance()) {
+            return new Response("Insufficient funds", Status.BAD_REQUEST);
+        }
+ 
+
+
+        // Validar existencia de las cuentas
+        if (sourceAccount == null) {
+            return new Response("Source account not found", Status.NOT_FOUND);
+        }
+        if (destinationAccount == null) {
             return new Response("Destination account not found", Status.NOT_FOUND);
         }
 
-        // Validar saldo suficiente en la cuenta origen
-        if (amountDouble > fromAccount.getBalance()) {
-            return new Response("Insufficient funds in source account", Status.BAD_REQUEST);
-        }
-
-        // Realizar transferencia
-        fromAccount.withdraw(amountDouble);
-        toAccount.deposit(amountDouble);
-
-        // Registrar la transacción
-        storage.addTransaction(new Transaction(fromAccountId, toAccountId, amountDouble, new Date()));
-        return new Response("Transfer successful", Status.OK);
-
-    } catch (Exception ex) {
-        return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
-    }
-}
-
-// Método para depositar dinero a una cuenta
-public static Response Deposit(String accountId, String amount) {
-    try {
-        double amountDouble;
-
-        // Validar que el monto sea numérico y positivo
-        try {
-            amountDouble = Double.parseDouble(amount);
-            if (amountDouble <= 0) {
-                return new Response("Amount must be positive", Status.BAD_REQUEST);
-            }
-        } catch (NumberFormatException ex) {
-            return new Response("Amount must be numeric", Status.BAD_REQUEST);
-        }
-
-        Storage storage = Storage.getInstance();
-        Account account = null;
-
-        // Buscar cuenta
-        for (Account acc : storage.getAccounts()) {
-            if (acc.getId().equals(accountId)) {
-                account = acc;
-                break;
-            }
-        }
-
-        // Validar existencia de la cuenta
-        if (account == null) {
-            return new Response("Account not found", Status.NOT_FOUND);
-        }
-
-        // Realizar depósito
-        account.deposit(amountDouble);
-
-        // Registrar la transacción
-        storage.addTransaction(new Transaction("DEPOSIT", accountId, amountDouble, new Date()));
-        return new Response("Deposit successful", Status.OK);
-
-    } catch (Exception ex) {
-        return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
-    }
-}
-
-// Método para retirar dinero de una cuenta
-public static Response Withdraw(String accountId, String amount) {
-    try {
-        double amountDouble;
-
-        // Validar que el monto sea numérico y positivo
-        try {
-            amountDouble = Double.parseDouble(amount);
-            if (amountDouble <= 0) {
-                return new Response("Amount must be positive", Status.BAD_REQUEST);
-            }
-        } catch (NumberFormatException ex) {
-            return new Response("Amount must be numeric", Status.BAD_REQUEST);
-        }
-
-        Storage storage = Storage.getInstance();
-        Account account = null;
-
-        // Buscar cuenta
-        for (Account acc : storage.getAccounts()) {
-            if (acc.getId().equals(accountId)) {
-                account = acc;
-                break;
-            }
-        }
-
-        // Validar existencia de la cuenta
-        if (account == null) {
-            return new Response("Account not found", Status.NOT_FOUND);
-        }
-
-        // Validar saldo suficiente
-        if (amountDouble > account.getBalance()) {
+        // Validar saldo suficiente en la cuenta de origen
+        if (amountDouble > sourceAccount.getBalance()) {
             return new Response("Insufficient funds", Status.BAD_REQUEST);
         }
 
-        // Realizar retiro
-        account.withdraw(amountDouble);
+        // Realizar la transferencia
+        sourceAccount.withdraw(amountDouble); // Retirar del origen
+        destinationAccount.deposit(amountDouble); // Depositar en el destino
 
-        // Registrar la transacción
-        storage.addTransaction(new Transaction("WITHDRAW", accountId, amountDouble, new Date()));
-        return new Response("Withdrawal successful", Status.OK);
+        // Registrar las transacciones
+        storage.addTransaction(new Transaction("TRANSFER", sourceAccountId, -amountDouble, new Date())); // Transacción de salida
+        storage.addTransaction(new Transaction("TRANSFER", destinationAccountId, amountDouble, new Date())); // Transacción de entrada
+
+        return new Response("Transfer successful", Status.OK);
 
     } catch (Exception ex) {
-        return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        return new Response("Unexpected error: " + ex.getMessage(), Status.INTERNAL_SERVER_ERROR);
     }
-}}
+}
+
+    }
 
 
 

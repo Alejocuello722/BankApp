@@ -10,22 +10,30 @@ import core.models.bank.Account;
 import core.models.person.User;
 import core.models.storage.Storage;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
  * @author Usuario
  */
 public class CreateAccountController {
-public static Response createAccount(String idAccount, User owner, String balance) {
+public static Response createAccount(String idUser, String balance) {
     try {
-        
-        int idInt= Integer.parseInt(idAccount);
-        // Validar que el id siga el formato
-        if (!idAccount.matches("^\\d{3}-\\d{6}-\\d{2}$")) {
-    return new Response("Account ID must follow the format XXX-XXXXXX-XX", Status.BAD_REQUEST);
-    }
+        // Validar que el ID del usuario sea numérico, positivo y no exceda 9 dígitos
+        int idInt;
+        try {
+            idInt = Integer.parseInt(idUser);
+            if (idInt < 0) {
+                return new Response("Id must be positive", Status.BAD_REQUEST);
+            }
+            if (idUser.length() > 9) {
+                return new Response("ID must have at most 9 digits", Status.BAD_REQUEST);
+            }
+        } catch (NumberFormatException ex) {
+            return new Response("Id must be numeric", Status.BAD_REQUEST);
+        }
 
-        // Validar que el valance sea mayor a 0
+        // Validar que el balance sea numérico y positivo
         int balanceInt;
         try {
             balanceInt = Integer.parseInt(balance);
@@ -36,38 +44,52 @@ public static Response createAccount(String idAccount, User owner, String balanc
             return new Response("Balance must be numeric", Status.BAD_REQUEST);
         }
 
-        // Validar Owner
-        if (owner == null) {
-            return new Response("Owner cannot be null", Status.BAD_REQUEST);
-        }
-
-        // Crear cuenta
+        // Obtener instancia del almacenamiento y lista de usuarios
         Storage storage = Storage.getInstance();
-        Account account = new Account(idAccount, owner, balanceInt); 
-        
-        if (!storage.addAccount(account)) {
-            return new Response("An account with that ID already exists", Status.BAD_REQUEST);
-        }
-        // Verificar que el usuario esté registrado
         ArrayList<User> users = storage.getUsers();
-        boolean userFound = false; 
 
-        for (User owner1 : users) {
-            if (owner1.getId() == idInt) { // Comparar el ID del usuario
-                userFound = true; // Usuario encontrado
-                break; // Salir del bucle si el usuario se encuentra
+        // Buscar al usuario correspondiente
+        User selectedUser = null;
+        for (User user : users) {
+            if (user.getId() == idInt) {
+                selectedUser = user;
+                break;
             }
         }
 
-        if (!userFound) { // Si el usuario no fue encontrado
-            return new Response("Account not found", Status.BAD_REQUEST);
+        // Validar que el usuario exista
+        if (selectedUser == null) {
+            return new Response("User not found", Status.BAD_REQUEST);
         }
-        
+
+        // Generar un ID único para la cuenta
+        Random random = new Random();
+        int first = random.nextInt(1000);
+        int second = random.nextInt(1000000);
+        int third = random.nextInt(100);
+
+        String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
+
+        // Crear y agregar la cuenta al almacenamiento
+        Account account = new Account(accountId, selectedUser, balanceInt);
+
+        // Validar si ya existe una cuenta con el mismo ID (aunque poco probable por el formato aleatorio)
+        ArrayList<Account> accounts = storage.getAccounts();
+        for (Account acc : accounts) {
+            if (acc.getId().equals(accountId)) {
+                return new Response("An account with that ID already exists", Status.BAD_REQUEST);
+            }
+        }
+
+        // Agregar la cuenta al almacenamiento
+        storage.addAccount(account);
 
         return new Response("Account created successfully", Status.CREATED);
+
     } catch (Exception ex) {
         return new Response("Unexpected error: " + ex.getMessage(), Status.INTERNAL_SERVER_ERROR);
     }
 }
+
 
 }

@@ -7,10 +7,9 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.bank.Account;
-import core.models.person.User;
 import core.models.storage.Storage;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import java.util.Comparator;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,29 +21,31 @@ import javax.swing.table.DefaultTableModel;
 public class ViewAccountController {
 
     public Response viewAccount(JTable usersTable) {
-        try {
-            // Obtener las cuentas desde el almacenamiento
-            Storage storage = Storage.getInstance();
-            ArrayList<Account> accounts = storage.getAccounts(); // Obtengo las cuentas
+    try {
+        // Obtener las cuentas desde el almacenamiento
+        Storage storage = Storage.getInstance();
+        ArrayList<Account> accounts = storage.getAccounts(); // Obtengo las cuentas
 
-            // Modelo de la tabla
-            DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
-            model.setRowCount(0); // Limpia las filas existentes
+        // Ordenar las cuentas por ID
+        accounts.sort(Comparator.comparing(Account::getId));
 
-            // Agregar los usuarios al modelo de la tabla
-            for (Account account : accounts) {
-                model.addRow(new Object[]{
-                    account.getId(),
-                    account.getOwner().getId(),
-                    account.getBalance(),
-                    
-                });
-                
-            }
-            return new Response("Users showed successfully", Status.OK);
-        } catch (Exception e) {
-            // Manejo de errores
-            return new Response("Error feaching or loading users", Status.INTERNAL_SERVER_ERROR);
+        // Modelo de la tabla
+        DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
+        model.setRowCount(0); // Limpia las filas existentes
+
+        // Agregar las cuentas al modelo de la tabla
+        for (Account account : accounts) {
+            model.addRow(new Object[]{
+                account.getId(),
+                account.getOwner().getId(),
+                account.getBalance(),
+            });
         }
+        return new Response("Accounts showed successfully", Status.OK);
+    } catch (Exception e) {
+        // Manejo de errores
+        return new Response("Error fetching or loading accounts", Status.INTERNAL_SERVER_ERROR);
     }
+}
+
 }
