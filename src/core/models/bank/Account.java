@@ -11,11 +11,13 @@ import core.models.person.User;
  * @author edangulo
  */
 
-
- public class Account extends TransactionAccountMethods {
+ public class Account {
     private String id;
     private User owner;
-    private double balance;
+    private BalanceManager balanceManager;  // Gestiona el saldo
+    private DepositOperation depositOperation; // Operaciones de depósito
+    private WithdrawOperation withdrawOperation; // Operaciones de retiro
+    private TransferOperation transferOperation; // Operaciones de transferencia
 
     // Constructores
     public Account(String id, User owner) {
@@ -25,7 +27,10 @@ import core.models.person.User;
     public Account(String id, User owner, double balance) {
         this.id = id;
         this.owner = owner;
-        this.balance = balance;
+        this.balanceManager = new BalanceManagerImpl(balance);  // Instancia BalanceManager
+        this.depositOperation = new Deposit();                   // Instancia DepositOperation
+        this.withdrawOperation = new Withdraw();                 // Instancia WithdrawOperation
+        this.transferOperation = new Transfer();                 // Instancia TransferOperation
 
         // Asocia la cuenta al usuario
         this.owner.addAccount(this);
@@ -40,33 +45,39 @@ import core.models.person.User;
         return owner;
     }
 
-    // Implementaciones de métodos abstractos
-    @Override
+    public DepositOperation getDepositOperation() {
+        return depositOperation;
+    }
+
+    public WithdrawOperation getWithdrawOperation() {
+        return withdrawOperation;
+    }
+
+    public TransferOperation getTransferOperation() {
+        return transferOperation;
+    }
+
+    public BalanceManager getBalanceManager() {
+        return balanceManager;
+    }
+
+    /**
+     * Método para obtener el balance actual de la cuenta.
+     */
     public double getBalance() {
-        return balance;
+        return balanceManager.getBalance(); // Delegando al BalanceManager
     }
 
-    @Override
-    protected void setBalance(double balance) {
-        this.balance = balance;
+    // Métodos de acción delegados
+    public void deposit(double amount) {
+        depositOperation.depositToAccount(amount, balanceManager);  // Delegando el depósito
     }
 
-    @Override
-    public void deposit(Account account, double amount) {
-        if (account == null) {
-            throw new IllegalArgumentException("Account cannot be null.");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero.");
-        }
-        account.depositToAccount(amount);
+    public boolean withdraw(double amount) {
+        return withdrawOperation.withdraw(amount, balanceManager);  // Delegando el retiro
     }
 
-    @Override
-    public void depositToAccount(double amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero.");
-        }
-        this.balance += amount;
+    public boolean transfer(Account destinationAccount, double amount) {
+        return transferOperation.transfer(destinationAccount, amount, balanceManager, depositOperation);  // Delegando la transferencia
     }
 }

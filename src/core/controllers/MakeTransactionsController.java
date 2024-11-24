@@ -51,7 +51,7 @@ public class MakeTransactionsController {
             }
 
             // Realizar depósito
-            account.deposit(account, amountDouble);
+            account.deposit(amountDouble);
 
             // Registrar la transacción
             storage.addTransaction(new Transaction(DEPOSIT, account, amountDouble, new Date()));

@@ -8,7 +8,7 @@ package core.models.bank;
  *
  * @author Usuario
  */
-public abstract class TransactionAccount {
+public abstract class TransactionAccountMethods {
     protected abstract double getBalance();
     protected abstract void setBalance(double balance);
     protected abstract void deposit(Account account, double amount);
